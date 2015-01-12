@@ -29,13 +29,27 @@ describe('the films submodule', function() {
     nock.cleanAll();
     done();
   });
-  it('should return a people object given it\'s id', function (done) {
 
-    done();
+  it('should return a film object given it\'s id', function (done) {
+    scope = nock('http://swapi.co')
+    .get('/api/films/1/')
+    .reply(200, require('./fixtures/a-new-hope.json'));
+
+    swapi.films.get(1).then(function(data) {
+      data.title.should.be.eql('A New Hope');
+
+      done();
+    });
   });
 
   it('should return an error when given an invalid id', function (done) {
+    scope = nock('http://swapi.co')
+    .get('/api/films/should-fail/')
+    .reply(404, {'should': 'fail'});
 
-    done();
+    swapi.films.get('should-fail', function(err) {
+      console.log(err);
+      done();
+    });
   });
 });
