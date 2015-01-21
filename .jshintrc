@@ -13,7 +13,6 @@
   "asi": true,
   "laxcomma": true,
   "globals": {
-    "before": false,
     "describe": false,
     "it": false,
     "before": false,

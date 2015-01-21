@@ -6,7 +6,7 @@ var nock = require('nock');
 var swapi = require('../lib/swapi');
 var scope = null;
 
-describe('the species endpoints', function() {
+describe('the starships endpoints', function() {
   before(function(done) {
     nock.disableNetConnect();
     done();
@@ -33,11 +33,11 @@ describe('the species endpoints', function() {
 
   it('should return a species object given an id', function (done) {
     scope = nock('http://swapi.co')
-    .get('/api/species/1/')
-    .reply(200, require('./fixtures/droid.json'));
+    .get('/api/starships/10/')
+    .reply(200, require('./fixtures/millenium-falcon.json'));
 
-    swapi.species.get(1).then(function(data) {
-      data.name.should.be.eql('Droid');
+    swapi.starships.get(10).then(function(data) {
+      data.name.should.be.eql('Millennium Falcon');
 
       done();
     });
@@ -45,22 +45,22 @@ describe('the species endpoints', function() {
 
   it('should return an error when given an invalid id', function (done) {
     scope = nock('http://swapi.co')
-    .get('/api/species/not-the-droid-you-are-looking-for/')
+    .get('/api/starships/should-fail/')
     .reply(404, {'should': 'fail'});
 
-    swapi.species.get('not-the-droid-you-are-looking-for', function(err) {
-
+    swapi.starships.get('should-fail', function(err) {
+      
 
       done();
     });
   });
 
-  it('should return a set of species', function(done) {
+  it('should return a set of starships', function(done) {
     scope = nock('http://swapi.co')
-    .get('/api/species/')
-    .reply(200, require('./fixtures/species.json'));
+    .get('/api/starships/')
+    .reply(200, require('./fixtures/starships.json'));
 
-    swapi.species.get().then(function(data) {
+    swapi.starships.get().then(function(data) {
       data.should.have.ownProperty('count');
       data.count.should.be.above(0);
       data.results.should.be.an.Array;

@@ -3,10 +3,10 @@
 
 var should = require('should');
 var nock = require('nock');
-var swapi = require('../index');
+var swapi = require('../lib/swapi');
 var scope = null;
 
-describe('the people submodule', function() {
+describe('the people endpoints', function() {
   before(function(done) {
     nock.disableNetConnect();
     done();
@@ -31,13 +31,40 @@ describe('the people submodule', function() {
     done();
   });
 
-  it('should return a person object given it\'s id', function (done) {
+  it('should return a character object given an id', function (done) {
+    scope = nock('http://swapi.co')
+    .get('/api/people/1/')
+    .reply(200, require('./fixtures/luke-skywalker.json'));
 
-    done();
+    swapi.people.get(1).then(function(data) {
+      data.name.should.be.eql('Luke Skywalker');
+
+      done();
+    });
   });
 
   it('should return an error when given an invalid id', function (done) {
+    scope = nock('http://swapi.co')
+    .get('/api/people/should-fail/')
+    .reply(404, {'should': 'fail'});
 
-    done();
+    swapi.people.get('should-fail', function(err) {
+
+      done();
+    });
+  });
+
+  it('should return a set of characters', function(done) {
+    scope = nock('http://swapi.co')
+    .get('/api/people/')
+    .reply(200, require('./fixtures/characters.json'));
+
+    swapi.people.get().then(function(data) {
+      data.should.have.ownProperty('count');
+      data.count.should.be.above(0);
+      data.results.should.be.an.Array;
+
+      done();
+    });
   });
 });
