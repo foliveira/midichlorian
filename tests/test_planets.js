@@ -6,7 +6,7 @@ var nock = require('nock');
 var swapi = require('../lib/swapi');
 var scope = null;
 
-describe('the species endpoints', function() {
+describe('the planets endpoints', function() {
   before(function(done) {
     nock.disableNetConnect();
     done();
@@ -31,13 +31,13 @@ describe('the species endpoints', function() {
     done();
   });
 
-  it('should return a species object given an id', function (done) {
+  it('should return a planet object given an id', function (done) {
     scope = nock('http://swapi.co')
-    .get('/api/species/1/')
-    .reply(200, require('./fixtures/droid.json'));
+    .get('/api/planets/1/')
+    .reply(200, require('./fixtures/tatooine.json'));
 
-    swapi.species.get(1).then(function(data) {
-      data.name.should.be.eql('Droid');
+    swapi.planets.get(1).then(function(data) {
+      data.name.should.be.eql('Tatooine');
 
       done();
     });
@@ -45,22 +45,22 @@ describe('the species endpoints', function() {
 
   it('should return an error when given an invalid id', function (done) {
     scope = nock('http://swapi.co')
-    .get('/api/species/not-the-droid-you-are-looking-for/')
+    .get('/api/planets/should-fail/')
     .reply(404, {'should': 'fail'});
 
-    swapi.species.get('not-the-droid-you-are-looking-for', function(err) {
-
+    swapi.planets.get('should-fail', function(err) {
+      
 
       done();
     });
   });
 
-  it('should return a set of species', function(done) {
+  it('should return a set of planets', function(done) {
     scope = nock('http://swapi.co')
-    .get('/api/species/')
-    .reply(200, require('./fixtures/species.json'));
+    .get('/api/planets/')
+    .reply(200, require('./fixtures/planets.json'));
 
-    swapi.species.get().then(function(data) {
+    swapi.planets.get().then(function(data) {
       data.should.have.ownProperty('count');
       data.count.should.be.above(0);
       data.results.should.be.an.Array;

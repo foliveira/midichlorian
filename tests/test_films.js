@@ -1,11 +1,12 @@
+/*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 
 var should = require('should');
 var nock = require('nock');
-var swapi = require('../index');
+var swapi = require('../lib/swapi');
 var scope = null;
 
-describe('the films submodule', function() {
+describe('the films endpoints', function() {
   before(function(done) {
     nock.disableNetConnect();
     done();
@@ -30,7 +31,7 @@ describe('the films submodule', function() {
     done();
   });
 
-  it('should return a film object given it\'s id', function (done) {
+  it('should return a film object given an id', function (done) {
     scope = nock('http://swapi.co')
     .get('/api/films/1/')
     .reply(200, require('./fixtures/a-new-hope.json'));
@@ -48,7 +49,21 @@ describe('the films submodule', function() {
     .reply(404, {'should': 'fail'});
 
     swapi.films.get('should-fail', function(err) {
-      console.log(err);
+
+      done();
+    });
+  });
+
+  it('should return a set of films', function(done) {
+    scope = nock('http://swapi.co')
+    .get('/api/films/')
+    .reply(200, require('./fixtures/films.json'));
+
+    swapi.films.get().then(function(data) {
+      data.should.have.ownProperty('count');
+      data.count.should.be.above(0);
+      data.results.should.be.an.Array;
+
       done();
     });
   });
