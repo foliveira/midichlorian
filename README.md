@@ -11,7 +11,7 @@
 ## Install
 
 ```sh
-$ npm install --save swapi
+$ npm install --save midichlorian
 ```
 
 
