@@ -26,6 +26,13 @@ midichlorian.people.get(1).then(function(p) {
 });
 ```
 
+It also supports pagination when requesting bulk resources
+
+```js
+midichlorian.people.get({page: 2}).then(function(p) {
+  /** Handle the new results page */
+});
+```
 
 ## License
 
